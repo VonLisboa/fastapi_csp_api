@@ -2,7 +2,8 @@ import asyncio
 import uvicorn
 import json
 from aiokafka import AIOKafkaProducer
-from fastapi import FastAPI
+from aiokafka.errors import KafkaError
+from fastapi import FastAPI, HTTPException
 from schema.contact import Contact
 
 app = FastAPI()
@@ -21,5 +22,9 @@ async def shutdown_event():
     await producer.stop()
 
 @app.post("/")
-def create_contact(contact: Contact):
-    return {"item": contact}
+async def create_contact(contact: Contact):
+    try:
+        result = await producer.send_and_wait("contact_topic", contact)
+        return { "timestamp": result.timestamp }
+    except KafkaError as err:
+        raise HTTPException(status_code=500, detail=err)
