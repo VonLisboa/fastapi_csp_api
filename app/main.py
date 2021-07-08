@@ -28,3 +28,6 @@ async def create_contact(contact: Contact):
         return { "timestamp": result.timestamp }
     except KafkaError as err:
         raise HTTPException(status_code=500, detail=err)
+
+if __name__ == '__main__':
+    uvicorn.run(app, host='0.0.0.0', port=8082)
