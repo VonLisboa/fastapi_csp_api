@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from schema.contact import Contact
 
 app = FastAPI()
 
@@ -9,5 +10,5 @@ def read_root():
 
 
 @app.post("/")
-def create_contact(item):
-    return {"item": item}
+def create_contact(contact: Contact):
+    return {"item": contact}
