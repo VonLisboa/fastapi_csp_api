@@ -14,7 +14,9 @@ producer = None
 async def startup_event():
     global producer
     producer = AIOKafkaProducer(
-        bootstrap_servers=['172.30.0.3:9092'])
+        bootstrap_servers=['172.30.0.3:9092'], 
+        value_serializer=lambda value: json.dumps(value.dict()).encode('utf-8'),
+        compression_type="gzip")
     await producer.start()
 
 @app.on_event("shutdown")
